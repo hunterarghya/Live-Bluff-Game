@@ -1,4 +1,4 @@
-from game_logic import BluffGame
+from backend.game_logic import BluffGame
 
 # -------------------------------------------------
 # HELPERS
@@ -168,4 +168,4 @@ if __name__ == "__main__":
     test_doubt_on_truth()
     test_game_over()
 
-    print("\n✅ ALL TESTS PASSED SUCCESSFULLY\n")
+    print("\nBINGO!!!!!!!!! ALL TESTS PASSED SUCCESSFULLY\n")
