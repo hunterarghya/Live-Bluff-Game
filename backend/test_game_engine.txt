@@ -166,6 +166,6 @@ if __name__ == "__main__":
     test_all_pass_dump()
     test_doubt_on_lie()
     test_doubt_on_truth()
-    
+    test_game_over()
 
     print("\nBINGO!!!!!!!!! ALL TESTS PASSED SUCCESSFULLY\n")
