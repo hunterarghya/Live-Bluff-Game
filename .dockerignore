@@ -1,0 +1,16 @@
+# Python environment
+.venv/
+__pycache__/
+*.py[cod]
+.env
+
+# Git
+.git/
+.gitignore
+
+# Useless Folders
+recycle_bin/
+
+# IDEs
+.vscode/
+.idea/

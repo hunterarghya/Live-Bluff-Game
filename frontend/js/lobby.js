@@ -44,7 +44,8 @@
 //   window.location.href = "/static/index.html";
 // }
 
-const API = "http://127.0.0.1:8000";
+// const API = "http://127.0.0.1:8000";
+const API = window.location.origin;
 
 function getToken() {
   return localStorage.getItem("token");

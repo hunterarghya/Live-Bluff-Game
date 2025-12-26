@@ -35,7 +35,10 @@ const iceConfig = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
    WEBSOCKET
 ===================================================== */
 function connect() {
-  ws = new WebSocket(`ws://127.0.0.1:8000/ws/${roomCode}/${token}`);
+  //   ws = new WebSocket(`ws://127.0.0.1:8000/ws/${roomCode}/${token}`);
+  const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+  const host = window.location.host; // includes port if local
+  ws = new WebSocket(`${protocol}//${host}/ws/${roomCode}/${token}`);
 
   ws.onmessage = (e) => {
     const data = JSON.parse(e.data);
@@ -425,7 +428,7 @@ async function startVideoCall() {
       JSON.stringify({
         type: "vc_request",
         from: myId,
-        name: localStorage.getItem("username"),
+        name: localStorage.getItem("name"),
       })
     );
   } catch (err) {
