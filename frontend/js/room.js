@@ -27,6 +27,10 @@ let lastPlayCount = 0;
 let lastRevealedCards = [];
 
 let isDoubtTransition = false; // lock variable for showing doubt cards
+
+let localStream;
+let peerConnections = {}; // Key: user_id, Value: RTCPeerConnection
+const iceConfig = { iceServers: [{ urls: "stun:stun.l.google.com:19302" }] };
 /* =====================================================
    WEBSOCKET
 ===================================================== */
@@ -60,6 +64,19 @@ function connect() {
 
       case "error":
         alert(data.message);
+        break;
+
+      case "vc_request":
+        handleVCRequest(data);
+        break;
+      case "offer":
+        handleOffer(data);
+        break;
+      case "answer":
+        handleAnswer(data);
+        break;
+      case "candidate":
+        handleCandidate(data);
         break;
     }
   };
@@ -384,4 +401,158 @@ function send() {
 function leaveRoom() {
   if (ws) ws.close();
   window.location.href = "/static/lobby.html";
+}
+
+/* =====================================================
+   VIDEO CALL LOGIC (WebRTC)
+===================================================== */
+async function startVideoCall() {
+  try {
+    localStream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: true,
+    });
+    addVideoElement(myId, localStream, true);
+
+    // UI Updates
+    document.getElementById("start-vc-btn").classList.add("hidden");
+    document.getElementById("hangup-btn").classList.remove("hidden");
+    document.getElementById("toggle-mic").classList.remove("hidden");
+    document.getElementById("toggle-cam").classList.remove("hidden");
+
+    // Notify others that we started a call
+    ws.send(
+      JSON.stringify({
+        type: "vc_request",
+        from: myId,
+        name: localStorage.getItem("username"),
+      })
+    );
+  } catch (err) {
+    alert("Could not access camera/mic: " + err);
+  }
+}
+
+async function handleVCRequest(data) {
+  if (data.from === myId) return;
+  // If we are already in a call, we should initiate connection to the new person
+  if (localStream) {
+    initiateCall(data.from);
+  } else {
+    renderSystemMessage(
+      `${data.name} started a video call. Click 'Start Video' to join.`
+    );
+  }
+}
+
+async function initiateCall(targetId) {
+  const pc = createPeerConnection(targetId);
+  const offer = await pc.createOffer();
+  await pc.setLocalDescription(offer);
+  ws.send(JSON.stringify({ type: "offer", offer, to: targetId, from: myId }));
+}
+
+function createPeerConnection(targetId) {
+  if (peerConnections[targetId]) return peerConnections[targetId];
+
+  const pc = new RTCPeerConnection(iceConfig);
+  peerConnections[targetId] = pc;
+
+  // Add local tracks to the connection
+  localStream.getTracks().forEach((track) => pc.addTrack(track, localStream));
+
+  // Handle incoming remote video stream
+  pc.ontrack = (event) => {
+    addVideoElement(targetId, event.streams[0], false);
+  };
+
+  // Handle ICE candidates
+  pc.onicecandidate = (event) => {
+    if (event.candidate) {
+      ws.send(
+        JSON.stringify({
+          type: "candidate",
+          candidate: event.candidate,
+          to: targetId,
+          from: myId,
+        })
+      );
+    }
+  };
+
+  return pc;
+}
+
+async function handleOffer(data) {
+  if (data.to !== myId) return;
+  if (!localStream) return; // Ignore if we haven't joined the VC
+
+  const pc = createPeerConnection(data.from);
+  await pc.setRemoteDescription(new RTCSessionDescription(data.offer));
+  const answer = await pc.createAnswer();
+  await pc.setLocalDescription(answer);
+  ws.send(
+    JSON.stringify({ type: "answer", answer, to: data.from, from: myId })
+  );
+}
+
+async function handleAnswer(data) {
+  if (data.to !== myId) return;
+  const pc = peerConnections[data.from];
+  if (pc) {
+    await pc.setRemoteDescription(new RTCSessionDescription(data.answer));
+  }
+}
+
+async function handleCandidate(data) {
+  if (data.to !== myId) return;
+  const pc = peerConnections[data.from];
+  if (pc) {
+    await pc.addIceCandidate(new RTCIceCandidate(data.candidate));
+  }
+}
+
+function addVideoElement(id, stream, isLocal) {
+  let video = document.getElementById(`video-${id}`);
+  if (!video) {
+    video = document.createElement("video");
+    video.id = `video-${id}`;
+    video.autoplay = true;
+    video.playsinline = true;
+    if (isLocal) video.muted = true;
+    video.style.width = "100%";
+    video.style.borderRadius = "5px";
+    document.getElementById("video-grid").appendChild(video);
+  }
+  video.srcObject = stream;
+}
+
+function toggleMic() {
+  const audioTrack = localStream.getAudioTracks()[0];
+  audioTrack.enabled = !audioTrack.enabled;
+  document.getElementById("toggle-mic").innerText = audioTrack.enabled
+    ? "Mic On"
+    : "Mic Off";
+}
+
+function toggleCam() {
+  const videoTrack = localStream.getVideoTracks()[0];
+  videoTrack.enabled = !videoTrack.enabled;
+  document.getElementById("toggle-cam").innerText = videoTrack.enabled
+    ? "Cam On"
+    : "Cam Off";
+}
+
+function hangup() {
+  if (localStream) {
+    localStream.getTracks().forEach((track) => track.stop());
+  }
+  Object.values(peerConnections).forEach((pc) => pc.close());
+  peerConnections = {};
+  document.getElementById("video-grid").innerHTML = "";
+  document.getElementById("start-vc-btn").classList.remove("hidden");
+  document.getElementById("hangup-btn").classList.add("hidden");
+  document.getElementById("toggle-mic").classList.add("hidden");
+  document.getElementById("toggle-cam").classList.add("hidden");
+  localStream = null;
 }

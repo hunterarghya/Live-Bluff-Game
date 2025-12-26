@@ -1,67 +1,58 @@
-# 🎴 Live Bluff Game with Chat & Video Calling
+# 🎴 Live Bluff Game with Real-Time Video & Chat
 
-A real-time **multiplayer Bluff (Cheat) card game** built with **FastAPI + WebSockets**, featuring **live chat** and a future-ready architecture for **WebRTC video conferencing**.
-
-This project was built as a full-stack, real-time system to demonstrate game-state synchronization, WebSocket communication, and multiplayer room management.
+A high-concurrency, real-time **Multi-Page Application** featuring the classic **Bluff (Cheat)** card game. This project demonstrates state synchronization, P2P communication, and asynchronous backend architecture.
 
 ---
 
-## 🚀 Features
+## 🚀 Core Features
 
-### 🎮 Game
+### 🎮 Gameplay Engine
 
-- 2–4 player **Bluff / Cheat** card game
-- Real-time turn-based gameplay
-- Card claiming and bluffing logic
-- **Doubt system** with actual card reveal
-- Automatic pile handling and reset
-- Winner detection and rematch support
-- Visual table layout with player seating
-- Active turn highlighting
+- **Distributed State Management:** Real-time synchronization of game turns, card claims, and player hands across 2–4 players using FastAPI WebSockets.
+- **Game Logic:** Full implementation of Bluff mechanics including card claiming, doubt (challenge) systems with visual card reveals, and automated pile management.
+- **Session Continuity:** JWT-authenticated room management with persistent table seating and active turn highlighting.
 
-### 💬 Chat
+### 🎥 Real-Time Communication (WebRTC & WebSockets)
 
-- Real-time room-based chat using WebSockets
-- Player and system messages
-- System messages for game events (winner, etc.)
-- Persistent chat UI during gameplay
+- **Peer-to-Peer Video Calling:** Integrated **WebRTC (Mesh Architecture)** for low-latency video conferencing during gameplay. Video data is transmitted directly between peers, bypassing the server to optimize performance.
+- **Signaling Server:** Leveraged the existing WebSocket infrastructure as a signaling channel for SDP offers/answers and ICE candidate exchange.
+- **Media Controls:** Independent camera/mic toggles and a dedicated "Join/Hang Up" lifecycle management.
+- **Live Chat:** Concurrent room-based messaging system for player interaction and automated system event logs.
 
-### 🎥 Video Calling (Planned)
+### 🛡️ Security & Scalability
 
-- Architecture prepared for **WebRTC integration**
-- Intended features:
-  - Room-based video conferencing
-  - Peer-to-peer streams
-  - Optional audio/video toggles
+- **Authentication:** Secure user registration and login with JWT-protected routes and Argon2 password hashing.
+- **Multi-User Isolation:** MongoDB-backed data isolation ensuring that player hands and private room data remain secure.
 
 ---
 
-## 🧠 Tech Stack
+## 🧠 Technical Stack
 
 ### Backend
 
-- **Python**
-- **FastAPI**
-- **WebSockets**
-- **JWT Authentication**
-- **MongoDB**
-- Python 3.10+
+- **Framework:** FastAPI (Python)
+- **Communication:** WebSockets (Real-time events) & WebRTC (Signaling)
+- **Database:** MongoDB (User data & Room state)
+- **Security:** JWT Authentication, Argon2 Hashing
+- **Concurrency:** Asynchronous event loop for handling simultaneous game actions
 
 ### Frontend
 
-- Vanilla **HTML / CSS / JavaScript**
-- WebSocket-based real-time updates
+- **Languages:** Vanilla JavaScript (ES6+), HTML5, CSS3
+- **APIs:** MediaDevices API (Camera/Mic access), RTCPeerConnection (WebRTC)
+- **Architecture:** Multi-Page Application (MPA) for clean state separation between Lobby and Game Room
 
-### Authentication
+---
 
-- JWT-based auth
-- Secure password hashing (Argon2)
-- Token-protected game rooms
+## 🛠️ System Architecture
+
+1. **The Handshake:** WebSockets establish the initial connection and manage the game state.
+2. **The Signaling:** When a video call starts, the server acts as a relay for WebRTC metadata.
+3. **The Stream:** Once the handshake is complete, video and audio flow directly between browsers using STUN servers to bypass NAT/Firewalls.
 
 ---
 
 ## 👤 Author
 
-**Arghya Malakar**  
-📧 arghyaapply2016@gmail.com  
-🌐 GitHub: https://github.com/hunterarghya
+**Arghya Malakar** 📧 [arghyaapply2016@gmail.com](mailto:arghyaapply2016@gmail.com)  
+🌐 GitHub: [hunterarghya](https://github.com/hunterarghya)

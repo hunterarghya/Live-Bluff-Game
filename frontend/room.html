@@ -247,7 +247,7 @@
       </div>
 
       <!-- RIGHT -->
-      <div id="right">
+      <!-- <div id="right">
         <div id="chat"></div>
         <div id="chat-controls">
           <input id="msg" placeholder="Message" />
@@ -255,7 +255,27 @@
         </div>
         <button onclick="leaveRoom()">Leave Room</button>
       </div>
+    </div> -->
+
+    <div id="right">
+  <div id="video-container" style="background: #222; border-bottom: 2px solid #000; display: flex; flex-direction: column;">
+    <div id="video-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 2px; background: #000; min-height: 150px;">
+      </div>
+    <div id="vc-controls" style="padding: 5px; display: flex; justify-content: space-around; background: #333;">
+      <button id="start-vc-btn" onclick="startVideoCall()" style="background: #27ae60; color: white;">Start Video</button>
+      <button id="hangup-btn" onclick="hangup()" class="hidden" style="background: #c0392b; color: white;">Hang Up</button>
+      <button id="toggle-mic" onclick="toggleMic()" class="hidden">Mic On</button>
+      <button id="toggle-cam" onclick="toggleCam()" class="hidden">Cam On</button>
     </div>
+  </div>
+
+  <div id="chat"></div>
+  <div id="chat-controls">
+    <input id="msg" placeholder="Message" />
+    <button onclick="send()">Send</button>
+  </div>
+  <button onclick="leaveRoom()">Leave Room</button>
+</div>
 
     <script src="/static/js/room.js"></script>
   </body>
