@@ -1,5 +1,7 @@
 # 🎴 Live Bluff Game with Real-Time Video & Chat
 
+[![CI Pipeline](https://github.com/hunterarghya/Live-Bluff-Game/actions/workflows/ci.yaml/badge.svg)](https://github.com/hunterarghya/Live-Bluff-Game/actions/workflows/ci.yaml)
+
 A high-concurrency, real-time **Multi-Page Application** featuring the classic **Bluff (Cheat)** card game. This project demonstrates state synchronization, P2P communication, and asynchronous backend architecture.
 
 🚀 **Live Demo:** [Try it here](https://live-bluff-game.onrender.com/)
