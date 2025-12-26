@@ -1,4 +1,4 @@
-# 🎴 Live Bluff Game with Real-Time Video & Chat
+# 🃏 Live Bluff Game with Real-Time Video & Chat
 
 [![CI Pipeline](https://github.com/hunterarghya/Live-Bluff-Game/actions/workflows/ci.yaml/badge.svg)](https://github.com/hunterarghya/Live-Bluff-Game/actions/workflows/ci.yaml)
 
