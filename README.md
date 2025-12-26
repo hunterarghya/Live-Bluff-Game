@@ -2,6 +2,8 @@
 
 A high-concurrency, real-time **Multi-Page Application** featuring the classic **Bluff (Cheat)** card game. This project demonstrates state synchronization, P2P communication, and asynchronous backend architecture.
 
+🚀 **Live Demo:** [Try it here](https://live-bluff-game.onrender.com/)
+
 ---
 
 ## 🚀 Core Features
